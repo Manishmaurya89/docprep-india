@@ -31,3 +31,6 @@ sample-files/
 
 # local preview config for the desktop app
 .claude/
+
+# Vercel CLI link (vercel link)
+.vercel
