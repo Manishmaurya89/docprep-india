@@ -43,8 +43,9 @@ These are read at **build** time, so rebuild after changing them.
 2. In Vercel: **Add New → Project**, import the repository. Framework preset:
    Next.js. No build settings need changing.
 3. Add the environment variables above (Production and Preview).
-4. Project → Settings → Functions: choose the **Mumbai (bom1)** region so
-   pages are rendered close to Indian users.
+4. Nothing to set for region or framework: `vercel.json` declares the
+   Next.js framework and the **Mumbai (bom1)** region, so pages are
+   rendered close to Indian users.
 5. Add your domain (Settings → Domains) and follow the DNS instructions;
    HTTPS is automatic.
 6. Do not enable Vercel Web Analytics or Speed Insights: both add scripts,
