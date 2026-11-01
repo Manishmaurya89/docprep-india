@@ -1,0 +1,221 @@
+@import "tailwindcss";
+
+/*
+ * Design tokens (light theme only). Colours are chosen for WCAG AA contrast
+ * (4.5:1 or better for body text) on both the surface and canvas colours.
+ */
+:root {
+  --canvas: #f5f6f8;
+  --surface: #ffffff;
+  --surface-muted: #eff1f4;
+  --border: #dadfe6;
+  --border-strong: #b9c1cc;
+  --fg: #111827;
+  --fg-muted: #444d5c;
+  --fg-subtle: #5f6878;
+  --accent: #1d4ed8;
+  --accent-hover: #1e3fae;
+  --accent-fg: #ffffff;
+  --accent-soft: #eaf0ff;
+  --success: #166534;
+  --success-soft: #e9f7ef;
+  --warning: #8a4b06;
+  --warning-soft: #fdf4e3;
+  --danger: #b4231b;
+  --danger-soft: #fdeeed;
+  --focus: #2563eb;
+  --shadow: 0 1px 2px rgb(16 24 40 / 0.06), 0 1px 3px rgb(16 24 40 / 0.08);
+  color-scheme: light;
+}
+
+@theme inline {
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-fg: var(--fg);
+  --color-fg-muted: var(--fg-muted);
+  --color-fg-subtle: var(--fg-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-soft: var(--accent-soft);
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-focus: var(--focus);
+  --shadow-card: var(--shadow);
+  /* System fonts only (no downloads, strict CSP). The Devanagari faces that ship with
+     Windows, macOS/iOS and Android come after the Latin ones, so Hindi text uses them. */
+  --font-sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", "Helvetica Neue", Arial, "Nirmala UI", "Kohinoor Devanagari",
+    "Devanagari Sangam MN", "Noto Sans Devanagari", "Mangal", sans-serif;
+  --font-mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+}
+
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+  body {
+    background: var(--canvas);
+    color: var(--fg);
+    font-family: var(--font-sans);
+    line-height: 1.55;
+  }
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--accent-soft);
+  }
+  h1,
+  h2,
+  h3 {
+    letter-spacing: -0.012em;
+    line-height: 1.25;
+    text-wrap: balance;
+  }
+  /* Devanagari vowel signs sit above and below the line: give them room, and no tight tracking. */
+  :lang(hi) body {
+    line-height: 1.65;
+  }
+  :lang(hi) :is(h1, h2, h3) {
+    letter-spacing: 0;
+    line-height: 1.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Checkerboard behind previews so transparency is visible. */
+.checkerboard {
+  background-color: var(--surface);
+  background-image:
+    linear-gradient(45deg, var(--surface-muted) 25%, transparent 25%),
+    linear-gradient(-45deg, var(--surface-muted) 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, var(--surface-muted) 75%),
+    linear-gradient(-45deg, transparent 75%, var(--surface-muted) 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/*
+ * Scroll-linked motion. Only transforms are animated (never opacity), so text
+ * is always fully visible and readable, and nothing moves for people who ask
+ * for reduced motion. Browsers without scroll-driven animations show the
+ * illustrations still.
+ */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (animation-timeline: view()) {
+    .scroll-rise {
+      animation: scroll-rise linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 90%;
+    }
+    .scroll-scope {
+      view-timeline: --scope block;
+    }
+    .float-a,
+    .float-b,
+    .float-c,
+    .scroll-spin,
+    .slide-x {
+      transform-box: fill-box;
+      transform-origin: center;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: --scope;
+      animation-range: cover 10% cover 90%;
+    }
+    .float-a {
+      animation-name: float-a;
+    }
+    .float-b {
+      animation-name: float-b;
+    }
+    .float-c {
+      animation-name: float-c;
+    }
+    .scroll-spin {
+      animation-name: scroll-spin;
+    }
+    .slide-x {
+      animation-name: slide-x;
+    }
+  }
+  .lift {
+    transition: transform 160ms ease, box-shadow 160ms ease;
+  }
+  .lift:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 24px rgb(16 24 40 / 0.1);
+  }
+}
+
+@keyframes scroll-rise {
+  from {
+    transform: translateY(36px);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes float-a {
+  from {
+    transform: translateY(26px) rotate(-6deg);
+  }
+  to {
+    transform: translateY(-26px) rotate(4deg);
+  }
+}
+@keyframes float-b {
+  from {
+    transform: translateY(-18px);
+  }
+  to {
+    transform: translateY(22px);
+  }
+}
+@keyframes float-c {
+  from {
+    transform: translate(-14px, 14px) rotate(8deg);
+  }
+  to {
+    transform: translate(10px, -18px) rotate(-4deg);
+  }
+}
+@keyframes scroll-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(270deg);
+  }
+}
+@keyframes slide-x {
+  from {
+    transform: translateX(-28px);
+  }
+  to {
+    transform: translateX(28px);
+  }
+}

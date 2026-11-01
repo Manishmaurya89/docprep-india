@@ -1,0 +1,18 @@
+import type { Metadata } from "next";
+import { SizePage, sizeMetadata, sizeStaticParams } from "@/app/_views/tools";
+
+type Params = Promise<{ size: string }>;
+
+/** Only the listed sizes exist; anything else is a 404. */
+export const dynamicParams = false;
+export function generateStaticParams() {
+  return sizeStaticParams("compress-image");
+}
+
+export function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  return sizeMetadata("compress-image", { locale: "hi", params });
+}
+
+export default function Page({ params }: { params: Params }) {
+  return <SizePage tool="compress-image" locale="hi" params={params} />;
+}
