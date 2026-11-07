@@ -1,6 +1,6 @@
 # Test Report
 
-Last run on 2026-10-29 · macOS (Darwin 27, Apple Silicon) · Node.js 24.21.0 ·
+Last run on 2026-11-08 (after adding PDF to JPG/PNG) · macOS (Darwin 27, Apple Silicon) · Node.js 24.21.0 ·
 npm 11.19.0 · Playwright 1.64.1 (Chromium and WebKit 27.2 builds).
 
 All commands below were run against the final code. Nothing was skipped or
@@ -12,23 +12,23 @@ marked as expected-to-fail except the one test noted.
 | --- | --- | --- |
 | Lint | `npm run lint` | Pass — 0 problems |
 | Type check | `npm run typecheck` | Pass — 0 errors |
-| Unit tests | `npm test` | **115 passed** (12 files) |
+| Unit tests | `npm test` | **143 passed** (15 files) |
 | Production build | `npm run build` | Pass (also as the self-contained Docker server: `NEXT_OUTPUT=standalone`) |
-| End-to-end | `npx playwright test` | **124 passed, 2 skipped** |
-| Flakiness check | resilience, application-prep and real-content specs, `--repeat-each=3` | 54 / 54 passed |
-| Dependency audit | `npm audit` | 0 vulnerabilities |
+| End-to-end | `npx playwright test` | **212 passed, 3 skipped** |
+| Flakiness check | `pdf-to-image` spec, `--repeat-each=3` (Chromium + WebKit) | 42 / 42 passed (earlier: resilience, application-prep and real-content, 54 / 54) |
+| Dependency audit | `npm audit --omit=dev` | 0 vulnerabilities in anything shipped. `npm audit` (all) reports 8 moderate advisories in the dev-only lint chain (`minimatch` via `typescript-eslint` / `eslint-config-next`); the only offered fix downgrades `eslint-config-next`, so it waits for an upstream release |
 
-The skipped tests skip themselves by design: the mobile-menu test on the
-desktop project, and the mouse-drag test on the iPhone project (finger
-dragging is tested there instead).
+The skipped tests skip themselves by design: the two mobile-menu tests
+(English and Hindi) on the desktop project, and the mouse-drag test on the
+iPhone project (finger dragging is tested there instead).
 
 ## End-to-end coverage
 
 | Project | Device | Passed |
 | --- | --- | --- |
-| `desktop-chromium` | Desktop Chrome | 74 |
-| `mobile-chromium` | Pixel 7 (accessibility + responsive specs) | 20 |
-| `mobile-webkit` | iPhone 14 (core journeys, real-content paths, page arranging) | 30 |
+| `desktop-chromium` | Desktop Chrome | 105 |
+| `mobile-chromium` | Pixel 7 (accessibility, responsive and Hindi specs) | 45 |
+| `mobile-webkit` | iPhone 14 (core journeys, real-content paths, page arranging, PDF to JPG/PNG, Hindi) | 62 |
 
 Required journeys:
 
@@ -48,6 +48,19 @@ stored sideways with EXIF orientation shown and saved upright; transparency
 warning and flattened JPEG output; 90° rotation swapping output dimensions; a
 genuinely encrypted PDF (Ghostscript, encrypted object streams) reported as
 password-protected; the verification sheet listing all 7 official records.
+
+PDF to JPG/PNG (`pdf-to-image.spec.ts`, Chromium and WebKit): every page of
+a 3-page PDF to JPG at 150 DPI (pixel size and recorded DPI read from the
+downloaded bytes, page content not blank, ZIP names in page order); one
+chosen page of a rotated PDF to 300 DPI PNG (landscape output); the genuinely
+encrypted Ghostscript PDF opened with its password after a wrong one is
+rejected, with no request carrying the password and nothing uploaded; a
+size limit met (≤ 150,000 bytes) and an impossible one (1 KB) reported as
+missed; PNG offers no size limit; a non-PDF rejected; axe scans of the
+password form and results; the Hindi page. Unit tests cover render sizes and
+canvas limits, file names, DPI writing for JPEG (existing and missing JFIF)
+and PNG (`pHYs` with a valid CRC), and telling "password needed" from "wrong
+password".
 
 Sample-file workflows (`sample-files.spec.ts`, runs when `npm run samples`
 has been run): every IBPS PO/MT-XVI document prepared from the samples with

@@ -170,6 +170,18 @@ function Scene({ icon, target }: { icon: ToolIcon; target?: string }) {
           </text>
         </>
       );
+    case "pdf-image":
+      return (
+        <>
+          <Doc x={10} y={12} w={26} h={38} />
+          <text x="23" y="44" textAnchor="middle" fontSize="8" fontWeight="700" fill={C.red}>
+            PDF
+          </text>
+          {arrow(41)}
+          <Photo x={56} y={14} w={30} h={26} />
+          <Pill x={56} y={44} text="JPG" tone="blue" />
+        </>
+      );
     case "pdf-compress":
       return (
         <>

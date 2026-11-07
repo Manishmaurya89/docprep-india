@@ -114,6 +114,15 @@ File ──► detectFormat(bytes)          reject anything not JPEG/PNG/WebP
      Text becomes non-selectable; the UI states this before running.
   The result reports actual sizes. If the output is not smaller, the UI says
   so and recommends keeping the original.
+- **PDF to JPG/PNG** (`pdf/to-images.ts`): PDF.js opens the file (with a
+  password when the user types one; `pdfPasswordProblem` tells "needs a
+  password" from "wrong password"), renders each chosen page at 72, 150 or
+  300 DPI (scaled down uniformly if the canvas limit would be exceeded),
+  encodes JPEG or PNG, verifies the bytes, and writes the DPI into the file
+  header (`dpi.ts`: JFIF density or a PNG `pHYs` chunk) so images print at
+  the page's real size. An optional per-image size limit (JPEG) reuses the
+  quality search with a 50% quality floor, then reduces pixels, so text stays
+  readable; unreachable limits are reported, not hidden.
 
 ### 4.3 Government application preparation
 

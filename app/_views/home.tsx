@@ -25,8 +25,8 @@ type QuickTask = keyof ReturnType<typeof getMessages>["home"]["quick"];
 const QUICK_TASKS: { id: QuickTask; href: string; art: ToolIcon }[] = [
   { id: "compress50", href: "/tools/compress-image?target=50&unit=KB", art: "compress" },
   { id: "photoSignature", href: "/tools/photo-signature", art: "id-photo" },
-  { id: "resize", href: "/tools/resize-image", art: "resize" },
   { id: "imagesToPdf", href: "/tools/images-to-pdf", art: "images-pdf" },
+  { id: "pdfToImage", href: "/tools/pdf-to-image", art: "pdf-image" },
   { id: "compressPdf", href: "/tools/compress-pdf", art: "pdf-compress" },
   { id: "merge", href: "/tools/merge-pdf", art: "merge" },
 ];

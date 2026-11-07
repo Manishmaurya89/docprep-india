@@ -18,6 +18,7 @@ export type ToolIcon =
   | "extract"
   | "organize"
   | "images-pdf"
+  | "pdf-image"
   | "pdf-compress"
   | "checklist";
 
@@ -143,6 +144,27 @@ export const TOOLS: readonly ToolDefinition[] = [
     accepts: ["JPEG", "PNG", "WebP"],
     processing: "local",
     icon: "images-pdf",
+  }),
+  tool({
+    slug: "pdf-to-image",
+    category: "pdf",
+    keywords: [
+      "pdf to jpg",
+      "pdf to jpeg",
+      "pdf to png",
+      "pdf to image",
+      "pdf to photo",
+      "convert pdf",
+      "aadhaar pdf to jpg",
+      "e-aadhaar",
+      "password protected pdf",
+      "certificate",
+      "mark sheet",
+      "pan card",
+    ],
+    accepts: ["PDF"],
+    processing: "local",
+    icon: "pdf-image",
   }),
 ];
 

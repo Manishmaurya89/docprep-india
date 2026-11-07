@@ -31,7 +31,7 @@ export default defineConfig({
       // Safari engine (iPhone emulation): core journeys only. Run with --project=mobile-webkit.
       name: "mobile-webkit",
       use: { ...devices["iPhone 14"] },
-      testMatch: /image-tools|pdf-tools|application-prep|errors|real-content|arrange-pages|hindi/,
+      testMatch: /image-tools|pdf-tools|pdf-to-image|application-prep|errors|real-content|arrange-pages|hindi/,
     },
   ],
   webServer: {

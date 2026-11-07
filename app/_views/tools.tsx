@@ -19,6 +19,7 @@ import { ExtractTool } from "@/features/pdf-tools/ExtractTool";
 import { ImagesToPdfTool } from "@/features/pdf-tools/ImagesToPdfTool";
 import { MergeTool } from "@/features/pdf-tools/MergeTool";
 import { OrganizeTool } from "@/features/pdf-tools/OrganizeTool";
+import { PdfToImageTool } from "@/features/pdf-tools/PdfToImageTool";
 import { SplitTool } from "@/features/pdf-tools/SplitTool";
 import { getMessages, i18n } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/config";
@@ -161,6 +162,14 @@ export function OrganizePdfPage({ locale }: { locale: Locale }) {
   return (
     <ToolShell tool={getTool("organize-pdf")} locale={locale}>
       <OrganizeTool />
+    </ToolShell>
+  );
+}
+
+export function PdfToImagePage({ locale }: { locale: Locale }) {
+  return (
+    <ToolShell tool={getTool("pdf-to-image")} locale={locale}>
+      <PdfToImageTool />
     </ToolShell>
   );
 }

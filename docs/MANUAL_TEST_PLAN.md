@@ -73,6 +73,10 @@ Record failures with: page URL, file used, browser and device, what you saw.
 | [ ] | Compress · `scanned-certificate.pdf` | Maximum | Warning that text stops being selectable; much smaller file |
 | [ ] | Images → PDF · `photo-portrait.jpg`, `photo-phone-rotated.jpg`, `webp-image.webp` | A4, Auto | Each image is shown on its page as it will print; the PDF has 3 pages; the phone photo is upright |
 | [ ] | Images → PDF · `certificate-scan-a4.jpg` + `large-photo-12mp.jpg` | Drag the second page onto the first (mouse, or the ⠿ grip with a finger); then rotate a page | Previews swap and show "Page 1 / Page 2"; rotation shows immediately; the PDF follows exactly what you see |
+| [ ] | PDF → JPG/PNG · `document-5-pages.pdf` | Defaults (JPG, Standard) | 5 images of 1240 × 1754 px at 150 DPI, each downloadable, plus a ZIP named `document-5-pages-jpg.zip` |
+| [ ] | PDF → JPG/PNG · `password-protected.pdf` | Type a wrong password, then `test1234` | "That password is not correct", then "opened with its password"; the image shows the page content |
+| [ ] | PDF → JPG/PNG · `scanned-certificate.pdf` | JPG, size limit 200 KB | Image ≤ 200 KB, or a clear message that the limit could not be reached |
+| [ ] | PDF → JPG/PNG · your own e-Aadhaar (optional) | Password = first 4 letters of your name in capitals + year of birth | Both pages of the card become images; nothing appears in the browser's network panel |
 
 ## 4. Government application preparation
 
@@ -128,7 +132,7 @@ Record failures with: page URL, file used, browser and device, what you saw.
 | [ ] | `damaged.png` | Any image tool | Could not be decoded / damaged |
 | [ ] | `not-really-a.pdf` | Any PDF tool | Not a PDF |
 | [ ] | `broken.pdf` | Any PDF tool | Damaged, with the "Print to PDF" tip |
-| [ ] | `password-protected.pdf` (password `test1234`) | Any PDF tool | Password-protected or locked, with how to make an unlocked copy |
+| [ ] | `password-protected.pdf` (password `test1234`) | Any PDF tool except PDF → JPG/PNG | Password-protected or locked, with how to make an unlocked copy (PDF → JPG/PNG asks for the password instead) |
 | [ ] | `photo-portrait.jpg` | Merge PDF | Rejected as not a PDF |
 
 ## 6. Accessibility and layout

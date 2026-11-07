@@ -106,6 +106,7 @@ const DETAIL_TEXT = {
   pdfDamagedPages: ({ name }: { name?: string }) => `${subject(name)} has a damaged page structure.`,
   pdfNoPages: ({ name }: { name?: string }) => `${subject(name)} does not contain any pages.`,
   previewFailed: () => "The PDF could not be rendered for preview.",
+  pageImagesTooLarge: () => "These images are too large to hold in this browser at once. Choose fewer pages, a lower resolution or JPG.",
   // PDF operations
   outputPageMismatch: ({ actual, expected }: { actual: number; expected: number }) => `The output has ${actual} pages but ${expected} were expected.`,
   mergeNeedsTwo: () => "Select at least two PDFs to merge.",

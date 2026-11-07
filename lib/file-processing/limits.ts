@@ -10,6 +10,8 @@ export const LIMITS = {
   pdfMaxBytes: 150 * 1024 * 1024,
   /** Combined size of all PDFs in one merge. */
   pdfBatchMaxBytes: 300 * 1024 * 1024,
+  /** Combined size of the images made from one PDF (PDF to JPG/PNG), all held in memory. */
+  pdfImagesMaxTotalBytes: 400 * 1024 * 1024,
   /** Maximum number of files in one batch (merge, images to PDF). */
   maxBatchFiles: 50,
   /** Images above this are refused outright (decompression-bomb guard). */

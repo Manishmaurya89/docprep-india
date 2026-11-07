@@ -13,7 +13,7 @@ uploaded.**
 | --- | --- |
 | Application preparation | Guided flow: organisation → examination → notification → each required document prepared and checked (pass / fail / check-yourself), individual downloads or one ZIP. Custom presets for any other notification. |
 | Image tools | Resize (pixels or %, aspect lock, no upscaling by default) · Compress to a target size (iterative, measured) · Crop & rotate (freeform or fixed ratio, keyboard and touch) · Convert JPEG/PNG/WebP (re-encoding, transparency warning) · Photo & signature maker (exact size, KB range, validation report) |
-| PDF tools | Merge · Split by ranges / every N pages · Extract pages · Reorder, rotate, delete with previews · Compress (structural, image recompression, or rasterise) · Images to PDF |
+| PDF tools | Merge · Split by ranges / every N pages · Extract pages · Reorder, rotate, delete with previews · Compress (structural, image recompression, or rasterise) · Images to PDF · PDF to JPG/PNG (also password-protected PDFs such as e-Aadhaar) |
 
 Requirement presets live in a structured, schema-validated registry with
 official source links and verification status. See

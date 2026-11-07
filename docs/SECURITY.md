@@ -97,7 +97,13 @@ disabled), `Cross-Origin-Opener-Policy: same-origin`,
   rendered as text and sanitised before use as download names.
 - PDF.js runs with scripting disabled (no `enableScripting`), with its worker
   served from our origin. pdf-lib does not execute PDF JavaScript.
-- Encrypted PDFs are rejected rather than partially processed.
+- Encrypted PDFs are rejected by the editing tools rather than partially
+  processed. The one exception is **PDF to JPG/PNG**: it can open a
+  password-protected PDF (for example e-Aadhaar) with a password the user
+  types. The password goes only to PDF.js in the same tab (which keeps it
+  for the open document), is cleared from the field after each attempt, is
+  never stored or put in a URL, and the field has `autocomplete="off"`. An
+  E2E test checks that no request contains it.
 
 ## 3. Supply chain
 
@@ -157,6 +163,11 @@ Any future server feature (for example office-document conversion) must:
   metadata segments (EXIF, XMP, IPTC, comments, data after the image) are
   stripped explicitly first (`lib/file-processing/strip-metadata.ts`).
 - pdf-lib does not decrypt PDFs; password-protected PDFs cannot be edited.
+  They can only be turned into images (PDF to JPG/PNG), which PDF.js renders
+  after decrypting them in the browser.
+- PDF to JPG/PNG holds all produced images in memory; the total is capped at
+  400 MB (`LIMITS.pdfImagesMaxTotalBytes`) and very large pages are rendered
+  at a lower DPI to stay within canvas limits (the UI says so).
 - Dynamic rendering (needed for CSP nonces) means pages are rendered per
   request rather than served as static HTML.
 

@@ -23,7 +23,11 @@ export function loadPdfJs(): Promise<PdfJs> {
   return loader;
 }
 
-export async function openPdfForRendering(bytes: Uint8Array): Promise<PdfJsDocument> {
+/**
+ * Opens a PDF for rendering. A password, when given, is used only by PDF.js
+ * in this browser to decrypt the file; it is never stored or sent anywhere.
+ */
+export async function openPdfForRendering(bytes: Uint8Array, options: { password?: string } = {}): Promise<PdfJsDocument> {
   const pdfjs = await loadPdfJs();
   const base = assetBase(pdfjs);
   // PDF.js transfers (detaches) the buffer it receives, so give it a copy.
@@ -34,6 +38,7 @@ export async function openPdfForRendering(bytes: Uint8Array): Promise<PdfJsDocum
     cMapPacked: true,
     wasmUrl: `${base}/wasm/`,
     stopAtErrors: false,
+    ...(options.password !== undefined ? { password: options.password } : {}),
   });
   try {
     return await task.promise;
@@ -43,6 +48,18 @@ export async function openPdfForRendering(bytes: Uint8Array): Promise<PdfJsDocum
     if (name === "InvalidPDFException") throw new ProcessingError("pdf-malformed", undefined, { cause: error });
     throw new ProcessingError("pdf-malformed", detail("previewFailed"), { cause: error });
   }
+}
+
+/**
+ * Why PDF.js could not open a file because of its password: none was given
+ * ("needed") or the one given was wrong ("incorrect"). Null for other errors.
+ */
+export function pdfPasswordProblem(error: unknown): "needed" | "incorrect" | null {
+  if (!(error instanceof ProcessingError) || error.code !== "pdf-encrypted") return null;
+  const cause = error.cause as { name?: string; code?: number } | undefined;
+  if (cause?.name !== "PasswordException") return null;
+  // PDF.js PasswordResponses: 1 = NEED_PASSWORD, 2 = INCORRECT_PASSWORD.
+  return cause.code === 2 ? "incorrect" : "needed";
 }
 
 /** Renders one page (1-based) to a canvas at the given CSS-pixel width. */

@@ -12,6 +12,7 @@ const MAP: Record<ToolIconName, IconName> = {
   extract: "extract",
   organize: "organize",
   "images-pdf": "imagesPdf",
+  "pdf-image": "pdfImage",
   "pdf-compress": "pdfCompress",
   checklist: "checklist",
 };
