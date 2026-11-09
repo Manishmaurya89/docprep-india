@@ -42,6 +42,8 @@ const paths = {
   organize: "M4 4h7v7H4zM13 4h7v7h-7zM4 13h7v7H4zM13 13h7v7h-7z",
   imagesPdf: "M3 7h11v13H3zM7 3h11a2 2 0 0 1 2 2v11M3 16l3-3 3 3 2-2 3 3",
   pdfImage: "M10 3H5a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h1M10 3l4 4v4M10 3v4h4M10 11h11v10H10zM10 19l3-3 2 2 2-2 4 4M18 14h.01",
+  camera: "M4 7h3l2-3h6l2 3h3a1 1 0 0 1 1 1v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1ZM12 17a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z",
+  photoBg: "M3 3h18v18H3zM12 12a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm-5.5 9a5.5 5.5 0 0 1 11 0M3 8l5-5M3 14 14 3M16 3l5 5",
   pdfCompress: "M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5ZM9 12l3-3 3 3M9 16l3 3 3-3",
   checklist: "M9 6h11M9 12h11M9 18h11M4 6l1 1 2-2M4 12l1 1 2-2M4 18l1 1 2-2",
   zip: "M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8l-5-5ZM11 5h1m-1 3h1m-1 3h1m-1 3h2v3h-2z",

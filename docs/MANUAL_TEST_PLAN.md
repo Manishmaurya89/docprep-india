@@ -59,6 +59,24 @@ Record failures with: page URL, file used, browser and device, what you saw.
 | [ ] | Convert · `logo-transparent.png` → JPEG | Pick a fill colour | Warning "Transparency will be lost"; transparent areas use the colour |
 | [ ] | Convert · `webp-image.webp` → PNG | — | PNG download, same dimensions |
 
+### 2.1 Photo background (needs a real camera — test on an Android phone and an iPhone)
+
+| ✓ | Steps | Expected |
+| --- | --- | --- |
+| [ ] | Open **Change photo background** on the phone and tap **Take a live photo** | The browser asks for the camera. After allowing it, "Getting the background tool ready" shows once (about 3 MB the first time), then the live picture appears with the background already white and a dashed oval |
+| [ ] | Stand in front of a busy background (shelves, a door) and move far, close, to the side | Tips change: "Move a little closer", "Move back a little", "Move your face into the oval", then "Looks good. Hold still." The front-camera preview is mirrored like a mirror |
+| [ ] | Turn off the room light | "Find more light: face a window or a lamp." |
+| [ ] | Change the colour to **Red** while the camera is on | The live background turns red at once |
+| [ ] | Tick **3-second timer**, tap **Take photo** | Countdown 3, 2, 1, then the result: passport size, head and shoulders, red background, the photo the right way round (not mirrored). The camera light goes off |
+| [ ] | Check the hair and shoulder edges at full size | No left-over patches of the old background; edges look natural |
+| [ ] | Drag **Face size**, switch **Square** and **Whole photo**, change colours | Each change shows immediately |
+| [ ] | **Download JPG** and open it in the phone's gallery | 413 × 531 px; no location in the photo details |
+| [ ] | **Make it the exact size and KB** → enter 200 × 230 px, 20–50 KB → **Use these requirements** | The photo is already loaded in the photo card; preparing it passes every check |
+| [ ] | **Switch camera** (phone) | The back camera opens; its preview is not mirrored |
+| [ ] | Deny the camera permission, then reload and tap **Take a live photo** | "Camera access is blocked…" with a way forward (choose a photo) |
+| [ ] | Choose a group photo | Warning that several people were found |
+| [ ] | DevTools → Network during all of the above | Only `/vendor/mediapipe/…` files from this site; no requests to any other site |
+
 ## 3. PDF tools
 
 | ✓ | Tool and file | Steps | Expected |
@@ -140,10 +158,13 @@ Record failures with: page URL, file used, browser and device, what you saw.
 - [ ] Keyboard only (Tab / Shift+Tab / Enter / Space / arrows): the skip
   link appears first; every control is reachable with a visible focus ring;
   the file picker opens with Enter or Space.
+- [ ] Open the home page on a phone. **Expected:** the search box and the
+  first tool tiles are on the first screen; "PDF tools" shows only PDF
+  tools; the government forms section is at the bottom.
 - [ ] Press `/` on the home page. **Expected:** search box focused.
 - [ ] Zoom the browser to 200%. **Expected:** nothing overlaps or is cut off.
 - [ ] Scroll the home page slowly. **Expected:** the shield, cloud and
-  signature in the top picture drift a little; cards slide up as they
+  signature in the picture beside "Made for every online form" drift a little; cards slide up as they
   appear. Turn on "Reduce motion" (macOS: Accessibility → Display; iPhone:
   Accessibility → Motion) and reload. **Expected:** everything stays still.
 - [ ] Every tool page shows the green "Your file stays on this device"

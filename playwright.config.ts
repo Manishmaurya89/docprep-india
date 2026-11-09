@@ -20,7 +20,7 @@ export default defineConfig({
     {
       name: "mobile-chromium",
       use: { ...devices["Pixel 7"] },
-      testMatch: /responsive|accessibility|hindi/,
+      testMatch: /responsive|accessibility|hindi|home/,
     },
     // Opt-in: Playwright's Firefox could not launch in the environment where this suite was written
     // ("Could not find profile folder"), so it is not part of the default run. Enable with E2E_FIREFOX=1.
@@ -31,7 +31,7 @@ export default defineConfig({
       // Safari engine (iPhone emulation): core journeys only. Run with --project=mobile-webkit.
       name: "mobile-webkit",
       use: { ...devices["iPhone 14"] },
-      testMatch: /image-tools|pdf-tools|pdf-to-image|application-prep|errors|real-content|arrange-pages|hindi/,
+      testMatch: /image-tools|pdf-tools|pdf-to-image|photo-background\.spec|application-prep|errors|real-content|arrange-pages|hindi|home/,
     },
   ],
   webServer: {

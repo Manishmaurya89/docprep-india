@@ -13,6 +13,7 @@ const MAP: Record<ToolIconName, IconName> = {
   organize: "organize",
   "images-pdf": "imagesPdf",
   "pdf-image": "pdfImage",
+  "photo-bg": "photoBg",
   "pdf-compress": "pdfCompress",
   checklist: "checklist",
 };

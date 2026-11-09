@@ -19,6 +19,7 @@ export type ToolIcon =
   | "organize"
   | "images-pdf"
   | "pdf-image"
+  | "photo-bg"
   | "pdf-compress"
   | "checklist";
 
@@ -64,6 +65,30 @@ export const TOOLS: readonly ToolDefinition[] = [
     accepts: ["JPEG", "PNG", "WebP"],
     processing: "local",
     icon: "id-photo",
+  }),
+  tool({
+    slug: "photo-background",
+    category: "image",
+    keywords: [
+      "photo background",
+      "change background",
+      "background change",
+      "white background",
+      "passport photo background",
+      "passport size photo",
+      "remove background",
+      "red background",
+      "blue background",
+      "live photo",
+      "camera",
+      "selfie",
+      "webcam",
+      "kyc photo",
+      "exam photo",
+    ],
+    accepts: ["JPEG", "PNG", "WebP", "Camera"],
+    processing: "local",
+    icon: "photo-bg",
   }),
   tool({
     slug: "resize-image",
@@ -198,4 +223,30 @@ export function searchTools(query: string, tools: readonly ToolDefinition[] = TO
     })
     .filter((entry) => entry.score > 0);
   return scored.sort((a, b) => b.score - a.score).map((entry) => entry.t);
+}
+
+/** Order of the home-page tiles: the most-used jobs first. Tools missing from this list follow in registry order, so a new tool always appears. */
+const TILE_ORDER: ToolSlug[] = [
+  "compress-image",
+  "photo-background",
+  "resize-image",
+  "photo-signature",
+  "crop-rotate-image",
+  "convert-image",
+  "images-to-pdf",
+  "pdf-to-image",
+  "compress-pdf",
+  "merge-pdf",
+  "split-pdf",
+  "organize-pdf",
+  "extract-pdf-pages",
+];
+
+/** Every editing tool (everything under /tools/), in tile order. */
+export function homeTiles(): ToolDefinition[] {
+  const rank = (tool: ToolDefinition) => {
+    const index = TILE_ORDER.indexOf(tool.slug as ToolSlug);
+    return index === -1 ? TILE_ORDER.length : index;
+  };
+  return TOOLS.filter((tool) => tool.href.startsWith("/tools/")).sort((a, b) => rank(a) - rank(b));
 }

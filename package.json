@@ -8,10 +8,10 @@
     "node": ">=22.13.0"
   },
   "scripts": {
-    "postinstall": "node scripts/copy-pdf-worker.mjs",
-    "predev": "node scripts/copy-pdf-worker.mjs",
+    "postinstall": "node scripts/copy-pdf-worker.mjs && node scripts/copy-mediapipe.mjs",
+    "predev": "node scripts/copy-pdf-worker.mjs && node scripts/copy-mediapipe.mjs",
     "dev": "next dev",
-    "prebuild": "node scripts/copy-pdf-worker.mjs",
+    "prebuild": "node scripts/copy-pdf-worker.mjs && node scripts/copy-mediapipe.mjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -24,6 +24,7 @@
     "brand-assets": "node scripts/generate-brand-assets.mjs"
   },
   "dependencies": {
+    "@mediapipe/tasks-vision": "1.1.1",
     "fflate": "0.8.3",
     "next": "16.4.3",
     "pdf-lib": "1.17.1",

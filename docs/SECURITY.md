@@ -83,7 +83,9 @@ nonce).
 
 `X-Content-Type-Options: nosniff`, `Referrer-Policy: no-referrer`,
 `Permissions-Policy` (camera, microphone, geolocation, payment, USB, etc.
-disabled), `Cross-Origin-Opener-Policy: same-origin`,
+disabled; the one exception is `camera=(self)` on `/tools/photo-background`
+and `/hi/tools/photo-background`, for the live photo — never for frames or
+other origins, and the microphone stays off), `Cross-Origin-Opener-Policy: same-origin`,
 `X-Frame-Options: DENY`, `Strict-Transport-Security` in production, and
 `poweredByHeader: false`.
 
@@ -104,6 +106,18 @@ disabled), `Cross-Origin-Opener-Policy: same-origin`,
   for the open document), is cleared from the field after each attempt, is
   never stored or put in a URL, and the field has `autocomplete="off"`. An
   E2E test checks that no request contains it.
+- **Camera (photo background tool only).** The browser asks the user first.
+  Frames are drawn to a canvas, cut out and discarded; nothing is recorded,
+  stored or sent (and `connect-src 'self'` would block sending). The camera
+  stops as soon as the photo is taken, the camera is closed or the page is
+  left (E2E-checked: no `<video>` remains). The saved photo is a fresh JPEG
+  with no EXIF, location or camera details.
+- **On-device AI.** The person cut-out and face detection run in the page
+  with MediaPipe's WebAssembly runtime and two small models, all served from
+  our origin and loaded only on that page. The loader inserts its script with
+  `createElement("script")`, which the nonce + `'strict-dynamic'` policy
+  allows; it needs `'wasm-unsafe-eval'` (already present for PDF.js) and no
+  `unsafe-eval`. The models' SHA-256 are pinned in a unit test.
 
 ## 3. Supply chain
 
@@ -112,6 +126,8 @@ disabled), `Cross-Origin-Opener-Policy: same-origin`,
 | next, react, react-dom | MIT | Framework |
 | pdf-lib | MIT | PDF editing (pure JS) |
 | pdfjs-dist | Apache-2.0 | PDF rendering |
+| @mediapipe/tasks-vision | Apache-2.0 | Person cut-out and face detection (photo background). Version 1.1.1 chosen over the then-newest 1.2.2 because that was under a week old. |
+| MediaPipe selfie segmenter and BlazeFace models | Apache-2.0 (model cards) | Committed in `assets/mediapipe/` with source URLs and SHA-256 |
 | fflate | MIT | ZIP creation |
 | zod | MIT | Schema validation |
 
@@ -170,6 +186,13 @@ Any future server feature (for example office-document conversion) must:
   at a lower DPI to stay within canvas limits (the UI says so).
 - Dynamic rendering (needed for CSP nonces) means pages are rendered per
   request rather than served as static HTML.
+- The photo background cut-out comes from a small, fast model: hair against a
+  busy background, or a second person, can be cut imperfectly. The tool shows
+  before and after, warns when no face or several people are found, and
+  suggests a plain wall and even light. The first use downloads about 2.7 MB
+  (compressed); older phones may show the live preview at a lower frame rate.
+- Some exams take a live photo inside their own portal; a photo made by this
+  tool cannot replace that, and the tool says so.
 
 ## 7. Reporting a vulnerability
 

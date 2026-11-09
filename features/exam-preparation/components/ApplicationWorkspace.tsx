@@ -36,7 +36,7 @@ function statusFor(requirement: DocumentRequirement, prepared: PreparedFile | nu
  * The per-notification workspace: one card per required document, a running
  * checklist, and a ZIP of everything prepared. All processing is local.
  */
-export function ApplicationWorkspace({ spec, zipName }: { spec: ApplicationSpec; zipName: string }) {
+export function ApplicationWorkspace({ spec, zipName, handoffKey }: { spec: ApplicationSpec; zipName: string; handoffKey?: string }) {
   const { t } = useI18n();
   const [prepared, setPrepared] = useState<Prepared>({});
   const [optedIn, setOptedIn] = useState<Record<string, boolean>>({});
@@ -49,6 +49,8 @@ export function ApplicationWorkspace({ spec, zipName }: { spec: ApplicationSpec;
   const toPrepare = applicable.filter((doc) => doc.kind !== "live-capture");
 
   const setFor = (id: string) => (file: PreparedFile | null) => setPrepared((current) => ({ ...current, [id]: file }));
+  // A handed-over photo goes to the first photograph only (never a signature or thumb slot).
+  const firstPhotoId = spec.documents.find((doc) => doc.kind === "image" && doc.type === "photograph")?.id;
 
   const downloadZip = async () => {
     setZipping(true);
@@ -103,7 +105,11 @@ export function ApplicationWorkspace({ spec, zipName }: { spec: ApplicationSpec;
                     doc.kind === "live-capture" ? (
                       <LiveCaptureNotice requirement={doc} />
                     ) : doc.kind === "image" ? (
-                      <ImageDocumentCard requirement={doc} onPrepared={setFor(doc.id)} />
+                      <ImageDocumentCard
+                        requirement={doc}
+                        onPrepared={setFor(doc.id)}
+                        handoffKey={handoffKey && doc.id === firstPhotoId ? handoffKey : undefined}
+                      />
                     ) : (
                       <PdfDocumentCard requirement={doc} onPrepared={setFor(doc.id)} />
                     )

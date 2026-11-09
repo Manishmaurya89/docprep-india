@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Alert } from "@/components/ui/Alert";
 import { Button, IconButton } from "@/components/ui/Button";
 import { Checkbox, Field, SegmentedControl } from "@/components/ui/Field";
@@ -21,6 +21,7 @@ import type { InspectedImage } from "@/lib/file-processing/inspect";
 import { planImageOutput } from "../plan";
 import { type PreparedFile, prepareImageDocument } from "../prepare-image";
 import { PreparedResult } from "./PreparedResult";
+import { takeHandOff } from "@/lib/handoff";
 import { useI18n } from "@/lib/i18n/client";
 
 const INK_DOCUMENTS = new Set(["signature", "left-thumb-impression", "handwritten-declaration"]);
@@ -30,7 +31,16 @@ function targetAspect(requirement: DocumentRequirement): number | null {
   return plan.aspect;
 }
 
-export function ImageDocumentCard({ requirement, onPrepared }: { requirement: DocumentRequirement; onPrepared: (file: PreparedFile | null) => void }) {
+export function ImageDocumentCard({
+  requirement,
+  onPrepared,
+  handoffKey,
+}: {
+  requirement: DocumentRequirement;
+  onPrepared: (file: PreparedFile | null) => void;
+  /** Load a photo handed over by another tool, if one is waiting. */
+  handoffKey?: string;
+}) {
   const { t } = useI18n();
   const e = t.exam;
   const job = useProcessingJob<PreparedFile>();
@@ -39,7 +49,13 @@ export function ImageDocumentCard({ requirement, onPrepared }: { requirement: Do
     onPrepared(null);
   };
   const input = useImageInput(invalidate);
-  const { image } = input;
+  const { image, select } = input;
+
+  useEffect(() => {
+    if (!handoffKey) return;
+    const file = takeHandOff(handoffKey);
+    if (file) void select([file]);
+  }, [handoffKey, select]);
 
   const allowedFormats = requirement.formats.filter((f): f is "jpeg" | "png" => f === "jpeg" || f === "png");
   const formats: ImageFormat[] = allowedFormats.length ? allowedFormats : ["jpeg", "png"];

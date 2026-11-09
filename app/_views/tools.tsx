@@ -20,6 +20,7 @@ import { ImagesToPdfTool } from "@/features/pdf-tools/ImagesToPdfTool";
 import { MergeTool } from "@/features/pdf-tools/MergeTool";
 import { OrganizeTool } from "@/features/pdf-tools/OrganizeTool";
 import { PdfToImageTool } from "@/features/pdf-tools/PdfToImageTool";
+import { PhotoBackgroundTool } from "@/features/photo-background/PhotoBackgroundTool";
 import { SplitTool } from "@/features/pdf-tools/SplitTool";
 import { getMessages, i18n } from "@/lib/i18n";
 import type { Locale } from "@/lib/i18n/config";
@@ -166,6 +167,14 @@ export function OrganizePdfPage({ locale }: { locale: Locale }) {
   );
 }
 
+export function PhotoBackgroundPage({ locale }: { locale: Locale }) {
+  return (
+    <ToolShell tool={getTool("photo-background")} locale={locale}>
+      <PhotoBackgroundTool />
+    </ToolShell>
+  );
+}
+
 export function PdfToImagePage({ locale }: { locale: Locale }) {
   return (
     <ToolShell tool={getTool("pdf-to-image")} locale={locale}>
@@ -236,7 +245,7 @@ export async function PhotoSignaturePage({ locale, searchParams }: Props) {
 
   return (
     <ToolShell tool={getTool("photo-signature")} locale={locale}>
-      <CustomPresetBuilder initial={initial} presets={presetOptions(locale)} allowMultiple={false} />
+      <CustomPresetBuilder initial={initial} presets={presetOptions(locale)} allowMultiple={false} handoffKey="photo-signature" />
     </ToolShell>
   );
 }

@@ -27,6 +27,7 @@ export type ProcessingErrorCode =
   | "spec-invalid"
   | "cancelled"
   | "download-failed"
+  | "model-failed"
   | "unknown";
 
 const CODE_TEXT: Record<ProcessingErrorCode, { title: string; hint?: string }> = {
@@ -69,6 +70,10 @@ const CODE_TEXT: Record<ProcessingErrorCode, { title: string; hint?: string }> =
   "download-failed": {
     title: "The download could not be started.",
     hint: "Check that your browser allows downloads from this site, then try again.",
+  },
+  "model-failed": {
+    title: "The photo background tool could not start in this browser.",
+    hint: "Reload the page and try again, or use an up-to-date Chrome, Edge, Firefox or Safari. Your photo was not sent anywhere.",
   },
   unknown: { title: "Processing failed unexpectedly.", hint: "Try again. If it keeps failing, try a different browser." },
 };

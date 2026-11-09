@@ -1,6 +1,6 @@
 # Test Report
 
-Last run on 2026-11-08 (after adding PDF to JPG/PNG) · macOS (Darwin 27, Apple Silicon) · Node.js 24.21.0 ·
+Last run on 2026-11-09 (after adding Change photo background, and moving the editing tools to the top of the home page) · macOS (Darwin 27, Apple Silicon) · Node.js 24.21.0 ·
 npm 11.19.0 · Playwright 1.64.1 (Chromium and WebKit 27.2 builds).
 
 All commands below were run against the final code. Nothing was skipped or
@@ -12,10 +12,10 @@ marked as expected-to-fail except the one test noted.
 | --- | --- | --- |
 | Lint | `npm run lint` | Pass — 0 problems |
 | Type check | `npm run typecheck` | Pass — 0 errors |
-| Unit tests | `npm test` | **143 passed** (15 files) |
+| Unit tests | `npm test` | **160 passed** (16 files) |
 | Production build | `npm run build` | Pass (also as the self-contained Docker server: `NEXT_OUTPUT=standalone`) |
-| End-to-end | `npx playwright test` | **212 passed, 3 skipped** |
-| Flakiness check | `pdf-to-image` spec, `--repeat-each=3` (Chromium + WebKit) | 42 / 42 passed (earlier: resilience, application-prep and real-content, 54 / 54) |
+| End-to-end | `npx playwright test` | **239 passed, 3 skipped** |
+| Flakiness check | `photo-background` specs, `--repeat-each=3` (Chromium + WebKit, incl. live camera) | 54 / 54 passed (earlier: `pdf-to-image` 42 / 42; resilience, application-prep and real-content 54 / 54) |
 | Dependency audit | `npm audit --omit=dev` | 0 vulnerabilities in anything shipped. `npm audit` (all) reports 8 moderate advisories in the dev-only lint chain (`minimatch` via `typescript-eslint` / `eslint-config-next`); the only offered fix downgrades `eslint-config-next`, so it waits for an upstream release |
 
 The skipped tests skip themselves by design: the two mobile-menu tests
@@ -26,9 +26,9 @@ iPhone project (finger dragging is tested there instead).
 
 | Project | Device | Passed |
 | --- | --- | --- |
-| `desktop-chromium` | Desktop Chrome | 105 |
-| `mobile-chromium` | Pixel 7 (accessibility, responsive and Hindi specs) | 45 |
-| `mobile-webkit` | iPhone 14 (core journeys, real-content paths, page arranging, PDF to JPG/PNG, Hindi) | 62 |
+| `desktop-chromium` | Desktop Chrome | 118 |
+| `mobile-chromium` | Pixel 7 (home, accessibility, responsive and Hindi specs) | 48 |
+| `mobile-webkit` | iPhone 14 (home, core journeys, real-content paths, page arranging, PDF to JPG/PNG, photo background, Hindi) | 73 |
 
 Required journeys:
 
@@ -61,6 +61,36 @@ password form and results; the Hindi page. Unit tests cover render sizes and
 canvas limits, file names, DPI writing for JPEG (existing and missing JFIF)
 and PNG (`pHYs` with a valid CRC), and telling "password needed" from "wrong
 password".
+
+Home page (`home.spec.ts`, desktop Chrome, Pixel 7 and iPhone 14): a tile for
+every tool under `/tools/`, with the first tiles on the first screen; the
+form cards below the tools and the government section below those (measured
+from the rendered positions); the All / Image / PDF filter shows the right
+number of tiles and a tile opens its tool; the Hindi page shows Hindi tiles
+linking to Hindi tool pages.
+
+Photo background (`photo-background.spec.ts` on desktop Chrome and iPhone
+WebKit; `photo-background-camera.spec.ts` on desktop Chrome): a real
+public-domain portrait (NASA's photo of Eileen Collins, with a flag and a
+shuttle model behind her) is cut out on the device — the downloaded JPEG is
+413 × 531 px at 300 DPI, its top corners are white (> 235 in every channel)
+while the face keeps its colour, and the MediaPipe runtime and both models
+load from `/vendor/mediapipe/<version>/` with no request to any other site.
+Changing to red, square or whole photo and the face-size slider re-draws
+without loading the models again. The photo is handed to the photo &
+signature maker and appears in its photo card. `Permissions-Policy` allows
+the camera on the tool's English and Hindi pages only. A photo with no face
+keeps the whole picture with a warning; a non-image is rejected; axe scans of
+the start screen and result; the Hindi page. The live camera uses Chromium's
+fake camera playing the same portrait: the preview's background is replaced
+live (white, and blue when chosen), a framing tip appears, the photo is
+taken, the camera switches off (no `<video>` left), and the download is a
+413 × 531 JPEG with a white background. Unit tests check the box blur against
+a direct computation, the guided filter turning a blurred mask into a step at
+the photo's edge, framing (aspect, face position, zoom range, no running past
+the bottom), output sizes, live tips, colour parsing, camera error messages,
+the in-memory handoff (one use, ten-minute expiry), that the served MediaPipe
+version matches the installed package, and the two models' SHA-256.
 
 Sample-file workflows (`sample-files.spec.ts`, runs when `npm run samples`
 has been run): every IBPS PO/MT-XVI document prepared from the samples with

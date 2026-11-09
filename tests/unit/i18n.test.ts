@@ -46,7 +46,7 @@ const SAME_IN_HINDI = new Set([
   "pdf.images.letter",
   "limits.exactPixels",
   "limits.sizeRange",
-  "pdf.toImages.imageDetails",
+  "pdf.toImages.imageDetails", "photoBackground.details",
 ]);
 
 const ROUTES = new Set(["/", "/tools", "/exam", "/exam/custom", "/exam/sources", "/exam/verify", "/privacy", ...TOOLS.map((tool) => tool.href)]);

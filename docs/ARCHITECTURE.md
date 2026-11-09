@@ -17,6 +17,7 @@ preserved.
 | ZIP | `fflate` (MIT, ~8 kB for zip) | Used for "download all". |
 | Schema validation | `zod` 4 | Validates every exam requirement record at load and in unit tests. |
 | Image processing | Browser Canvas / `OffscreenCanvas` in a Web Worker | No third-party image library. Falls back to the main thread when workers or `OffscreenCanvas` are unavailable. |
+| Person cut-out (photo background) | `@mediapipe/tasks-vision` 1.1.1 (Apache-2.0) with Google's selfie segmenter and BlazeFace short-range models (Apache-2.0) | Lazy-loaded only on the photo background page. WebAssembly runtime and models served from our own origin (`public/vendor/mediapipe/<version>/`, copied by `scripts/copy-mediapipe.mjs`; models committed in `assets/mediapipe/` with their SHA-256). About 2.7 MB compressed the first time. Runs on the CPU, the same on every device. |
 | Tests | Vitest (unit, Node), Playwright + axe-core (E2E, accessibility) | E2E runs against the production build. |
 
 No backend, database, authentication or cloud storage exists. No API routes
@@ -26,7 +27,7 @@ exist.
 
 ```
 app/                        Routes, layouts, metadata
-  page.tsx                  Home: search, quick tasks, exam prep, categories, privacy
+  page.tsx                  Home: search and every editing tool first, then privacy, form help, exam prep
   tools/                    One route per tool (thin wrappers around features/)
   exam/                     Guided government application preparation
   privacy/                  Privacy disclosure generated from the tool registry
@@ -97,7 +98,39 @@ File ──► detectFormat(bytes)          reject anything not JPEG/PNG/WebP
   client terminates the worker on abort. `useProcessingJob` tags each run with
   a sequence number and drops results from superseded runs.
 
-### 4.2 PDFs
+### 4.2 Photo background
+
+```
+photo or camera frame ──► upright canvas, ≤ ~4 MP
+  ──► working copy ≤ 1024 px ──► MediaPipe selfie segmenter ──► person mask (0–1)
+                             └─► BlazeFace ──► face boxes (main face; people ≥ ¼ its size)
+  ──► guided filter (photo brightness as guide) + sharpen ──► crisp mask on real edges
+  ──► photo drawn through the mask = person on transparent canvas   (kept: "Cutout")
+  ──► per change of colour / shape / face size: fill colour, draw person, crop, JPEG
+```
+
+- `lib/file-processing/background/mask.ts` (box blur, guided filter,
+  sharpening, resize, temporal blend) and `framing.ts` (head-and-shoulders
+  crop, output size, live tips) are pure and unit-tested; `mediapipe.ts`,
+  `cutout.ts` and `live.ts` are the browser parts.
+- The models run once per photo. Colour, shape and face size only re-draw
+  and re-encode, so they change instantly.
+- **Framing**: "Passport size" is the common 3.5 × 4.5 cm print size, output
+  at 413 × 531 px with 300 DPI recorded; the face box (roughly forehead to
+  chin) starts at 32 % of the height, adjustable 24–50 %. The crop may run
+  past the top or sides of the photo (filled with the background colour) but
+  zooms in rather than run past the bottom, which would cut the shoulders off.
+  No organisation's photo rules are claimed; exact pixel sizes and KB limits
+  are made by handing the photo to the photo & signature maker
+  (`lib/handoff.ts`, in memory only, during in-app navigation).
+- **Live camera** (`live.ts`): each frame is shrunk to 256 px for the model,
+  the mask is refined, blended with the previous frame (no flicker) and the
+  frame is drawn through it over the colour. Faces are looked for every sixth
+  frame for the tips (closer, back, centre, more light, one person). The
+  preview of the front camera is mirrored; the saved photo is not. The camera
+  stops when the photo is taken or the camera is closed.
+
+### 4.3 PDFs
 
 - pdf-lib performs merge, split, extract, reorder, rotate, delete and
   image→PDF. Pages are copied with `copyPages`, which preserves content,
@@ -124,7 +157,7 @@ File ──► detectFormat(bytes)          reject anything not JPEG/PNG/WebP
   quality search with a 50% quality floor, then reduces pixels, so text stays
   readable; unreachable limits are reported, not hidden.
 
-### 4.3 Government application preparation
+### 4.4 Government application preparation
 
 - `data/exam-requirements/schema.ts` defines `ApplicationSpec` and
   `DocumentRequirement`. Every record carries `source`, `notificationDate`,
@@ -154,7 +187,8 @@ nonce. This makes pages dynamically rendered, which is an accepted trade-off
 for a strict `script-src`. Static scripts (`/_next/static`, `/vendor`) get a
 fixed worker policy from `next.config.ts`, because a Web Worker is governed
 by the CSP sent with its own script. Static headers also add
-`X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy`,
+`X-Content-Type-Options`, `Referrer-Policy`, `Permissions-Policy` (camera
+allowed for this origin on the photo background page only),
 `Cross-Origin-Opener-Policy`, `X-Frame-Options`, and HSTS in production. See
 `SECURITY.md`.
 

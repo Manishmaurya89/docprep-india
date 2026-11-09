@@ -11,8 +11,8 @@ import { LOCALE_NAMES, LOCALE_TAGS, isTranslated, localizePath, stripLocale } fr
 import { Brand } from "./Brand";
 
 const NAV = [
-  { href: "/exam", key: "exam", match: (p: string) => p.startsWith("/exam") || p === "/tools/photo-signature" },
   { href: "/tools", key: "tools", match: (p: string) => p.startsWith("/tools") && p !== "/tools/photo-signature" },
+  { href: "/exam", key: "exam", match: (p: string) => p.startsWith("/exam") || p === "/tools/photo-signature" },
   { href: "/privacy", key: "privacy", match: (p: string) => p.startsWith("/privacy") },
 ] as const;
 

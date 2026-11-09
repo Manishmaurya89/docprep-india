@@ -6,10 +6,9 @@ import { PrivacyFlow } from "@/components/illustrations/PrivacyFlow";
 import { ChooseArt, DownloadArt, PrepareArt } from "@/components/illustrations/StepArt";
 import { ToolArt } from "@/components/illustrations/ToolArt";
 import { type UseCase, UseCaseArt } from "@/components/illustrations/UseCaseArt";
-import { ToolCard } from "@/components/layout/ToolCard";
+import { ToolGrid } from "@/components/layout/ToolGrid";
 import { ToolSearch } from "@/components/layout/ToolSearch";
 import { TrustStrip } from "@/components/layout/TrustStrip";
-import { ButtonLink } from "@/components/ui/Button";
 import { Icon } from "@/components/ui/icons";
 import { ORGANIZATIONS, specsForOrganization } from "@/data/exam-requirements";
 import type { DocumentType } from "@/data/exam-requirements/constants";
@@ -18,18 +17,24 @@ import type { Locale } from "@/lib/i18n/config";
 import { pageMetadata } from "@/lib/seo";
 import { siteConfig } from "@/lib/site-config";
 import { localizeTool } from "@/lib/tools/localize";
-import { type ToolIcon, toolsByCategory } from "@/lib/tools/registry";
+import { type ToolDefinition, homeTiles } from "@/lib/tools/registry";
 
-type QuickTask = keyof ReturnType<typeof getMessages>["home"]["quick"];
+/** Tools marked "New" on their tile. */
+const NEW_TOOLS = new Set(["photo-background"]);
 
-const QUICK_TASKS: { id: QuickTask; href: string; art: ToolIcon }[] = [
-  { id: "compress50", href: "/tools/compress-image?target=50&unit=KB", art: "compress" },
-  { id: "photoSignature", href: "/tools/photo-signature", art: "id-photo" },
-  { id: "imagesToPdf", href: "/tools/images-to-pdf", art: "images-pdf" },
-  { id: "pdfToImage", href: "/tools/pdf-to-image", art: "pdf-image" },
-  { id: "compressPdf", href: "/tools/compress-pdf", art: "pdf-compress" },
-  { id: "merge", href: "/tools/merge-pdf", art: "merge" },
-];
+function ToolTile({ tool, newLabel }: { tool: ToolDefinition; newLabel: string }) {
+  return (
+    <Link href={tool.href} className="lift group relative flex h-full flex-col gap-2 rounded-xl border border-border bg-surface p-3 hover:border-accent/50 sm:p-4">
+      <ToolArt icon={tool.icon} className="h-14 w-auto self-start sm:h-16" />
+      <span className="leading-snug font-semibold text-fg group-hover:text-accent">{tool.title}</span>
+      <span className="hidden text-sm text-fg-muted sm:block">{tool.summary}</span>
+      {/* After the title in reading order (so the link reads "Change photo background … New"), shown in the corner. */}
+      {NEW_TOOLS.has(tool.slug) ? (
+        <span className="absolute top-2.5 right-2.5 rounded-full bg-success-soft px-2 py-0.5 text-xs font-semibold text-success">{newLabel}</span>
+      ) : null}
+    </Link>
+  );
+}
 
 /** Who the tools are for. Links go to general tools; no organisation's limits are claimed here. Labels come from `home.useCases[id].links`, in order. */
 const USE_CASES: { id: UseCase; links: string[] }[] = [
@@ -66,57 +71,76 @@ export function HomePage({ locale }: { locale: Locale }) {
   const { t, href } = i18n(locale);
   const h = t.home;
   const organizations = ORGANIZATIONS.filter((org) => org.id !== "other");
+  const tiles = homeTiles().map((tool) => ({
+    id: tool.slug,
+    group: tool.category === "pdf" ? ("pdf" as const) : ("image" as const),
+    tile: <ToolTile tool={localizeTool(tool, t, locale)} newLabel={h.newBadge} />,
+  }));
   return (
     <div>
-      <section className="scroll-scope overflow-hidden bg-surface">
-        <div className="mx-auto grid max-w-6xl items-center gap-x-10 gap-y-5 px-4 pt-6 pb-6 sm:px-6 lg:grid-cols-[1.1fr_1fr] lg:pt-12 lg:pb-10">
-          <div className="space-y-4 lg:col-start-1 lg:row-start-1 lg:self-end">
-            <p className="inline-flex items-center gap-2 rounded-full bg-success-soft px-3 py-1 text-sm font-medium text-success">
-              <Icon name="shield" className="h-4 w-4" />
-              {h.badge}
-            </p>
-            <h1 className="text-3xl font-semibold tracking-tight text-fg sm:text-[2.6rem] sm:leading-[1.15]">{h.heading}</h1>
-            <p className="max-w-xl text-lg text-fg-muted">{h.intro(siteConfig.name)}</p>
-            <ul className="flex flex-wrap gap-2" aria-label={h.usedFor}>
-              {USE_CASES.map((useCase) => (
-                <li key={useCase.id}>
-                  <a
-                    href={`#use-${useCase.id}`}
-                    className="inline-flex rounded-full border border-border bg-canvas px-3 py-1 text-sm text-fg-muted hover:border-accent/50 hover:text-fg"
-                  >
-                    {h.useCases[useCase.id].chip}
-                  </a>
-                </li>
-              ))}
-            </ul>
+      {/* The tools come first: open the page, pick a tool, start editing. */}
+      <section aria-labelledby="home-heading" className="mx-auto max-w-6xl px-4 pt-8 pb-10 sm:px-6 lg:pt-12">
+        <div className="mx-auto max-w-3xl space-y-4 text-center">
+          <p className="inline-flex items-center gap-2 rounded-full bg-success-soft px-3 py-1 text-sm font-medium text-success">
+            <Icon name="shield" className="h-4 w-4" />
+            {h.badge}
+          </p>
+          <h1 id="home-heading" className="text-3xl font-semibold tracking-tight text-fg sm:text-[2.6rem] sm:leading-[1.15]">
+            {h.heading}
+          </h1>
+          <p className="mx-auto max-w-2xl text-base text-fg-muted sm:text-lg">{h.intro}</p>
+          <div className="mx-auto max-w-xl text-left">
+            <ToolSearch />
           </div>
-          {/* On phones the picture comes right after the headline, before the buttons. */}
-          <HeroArt locale={locale} className="mx-auto h-auto w-full max-w-[22rem] sm:max-w-md lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:max-w-none" />
-          <div className="space-y-4 lg:col-start-1 lg:row-start-2 lg:self-start">
-            <div className="flex flex-wrap gap-3">
-              <ButtonLink href={href("/tools")} size="lg" icon="search">
-                {h.findTool}
-              </ButtonLink>
-              <ButtonLink href={href("/exam")} size="lg" variant="secondary" icon="checklist">
-                {h.examForms}
-              </ButtonLink>
-            </div>
-            <div className="max-w-xl">
-              <ToolSearch />
-            </div>
-          </div>
+        </div>
+        <div className="mt-8">
+          <ToolGrid items={tiles} labels={{ filter: h.toolFilter, all: t.layout.nav.tools, image: t.categories.image, pdf: t.categories.pdf }} />
         </div>
       </section>
 
       <TrustStrip locale={locale} />
 
       <div className="mx-auto max-w-6xl space-y-16 px-4 py-12 sm:px-6">
-        <section aria-labelledby="use-cases" className="space-y-5">
+        <section aria-labelledby="how-it-works" className="scroll-scope space-y-6">
+          <h2 id="how-it-works" className="text-xl font-semibold text-fg">
+            {h.howTitle}
+          </h2>
+          <ol className="grid gap-6 md:grid-cols-3">
+            {STEPS.map((step, i) => (
+              <li key={step.id} className="scroll-rise rounded-xl border border-border bg-surface p-5 text-center">
+                <div className="mx-auto max-w-[12rem]">{step.art}</div>
+                <p className="mt-3 text-sm font-semibold text-accent">{h.step(i + 1)}</p>
+                <h3 className="mt-1 font-semibold text-fg">{h.steps[step.id].title}</h3>
+                <p className="mt-1 text-sm text-fg-muted">{h.steps[step.id].text}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        <section aria-labelledby="privacy-summary" className="space-y-6">
           <div className="max-w-2xl">
-            <h2 id="use-cases" className="text-xl font-semibold text-fg">
-              {h.useCasesTitle}
+            <h2 id="privacy-summary" className="text-xl font-semibold text-fg">
+              {h.privacyTitle}
             </h2>
-            <p className="mt-1 text-fg-muted">{h.useCasesText}</p>
+            <p className="mt-1 text-fg-muted">{h.privacyText}</p>
+          </div>
+          <PrivacyFlow locale={locale} />
+          <p className="text-center text-sm">
+            <Link href={href("/privacy")} className="font-medium text-accent hover:underline">
+              {h.privacyLink}
+            </Link>
+          </p>
+        </section>
+
+        <section aria-labelledby="use-cases" className="scroll-scope space-y-5">
+          <div className="grid items-center gap-6 lg:grid-cols-[1fr_20rem]">
+            <div className="max-w-2xl">
+              <h2 id="use-cases" className="text-xl font-semibold text-fg">
+                {h.useCasesTitle}
+              </h2>
+              <p className="mt-1 text-fg-muted">{h.useCasesText}</p>
+            </div>
+            <HeroArt locale={locale} className="mx-auto h-auto w-full max-w-[18rem] lg:max-w-none" />
           </div>
           <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {USE_CASES.map((useCase) => {
@@ -146,44 +170,6 @@ export function HomePage({ locale }: { locale: Locale }) {
               );
             })}
           </ul>
-        </section>
-
-        <section aria-labelledby="quick-tasks" className="space-y-5">
-          <h2 id="quick-tasks" className="text-xl font-semibold text-fg">
-            {h.quickTitle}
-          </h2>
-          <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {QUICK_TASKS.map((task) => (
-              <li key={task.id} className="scroll-rise">
-                <Link href={href(task.href)} className="lift flex h-full flex-col gap-3 rounded-xl border border-border bg-surface p-4 hover:border-accent/50">
-                  <ToolArt icon={task.art} className="mx-auto h-28 w-auto max-w-full" />
-                  <span className="flex items-center justify-between gap-2">
-                    <span>
-                      <span className="block font-semibold text-fg">{h.quick[task.id].title}</span>
-                      <span className="block text-sm text-fg-muted">{h.quick[task.id].detail}</span>
-                    </span>
-                    <Icon name="arrowRight" className="h-5 w-5 shrink-0 text-accent" />
-                  </span>
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-
-        <section aria-labelledby="how-it-works" className="scroll-scope space-y-6">
-          <h2 id="how-it-works" className="text-xl font-semibold text-fg">
-            {h.howTitle}
-          </h2>
-          <ol className="grid gap-6 md:grid-cols-3">
-            {STEPS.map((step, i) => (
-              <li key={step.id} className="scroll-rise rounded-xl border border-border bg-surface p-5 text-center">
-                <div className="mx-auto max-w-[12rem]">{step.art}</div>
-                <p className="mt-3 text-sm font-semibold text-accent">{h.step(i + 1)}</p>
-                <h3 className="mt-1 font-semibold text-fg">{h.steps[step.id].title}</h3>
-                <p className="mt-1 text-sm text-fg-muted">{h.steps[step.id].text}</p>
-              </li>
-            ))}
-          </ol>
         </section>
 
         <section aria-labelledby="gov-prep" className="space-y-6 rounded-2xl border border-border bg-surface p-5 sm:p-8">
@@ -236,35 +222,6 @@ export function HomePage({ locale }: { locale: Locale }) {
           </ul>
         </section>
 
-        <section aria-labelledby="privacy-summary" className="space-y-6">
-          <div className="max-w-2xl">
-            <h2 id="privacy-summary" className="text-xl font-semibold text-fg">
-              {h.privacyTitle}
-            </h2>
-            <p className="mt-1 text-fg-muted">{h.privacyText}</p>
-          </div>
-          <PrivacyFlow locale={locale} />
-          <p className="text-center text-sm">
-            <Link href={href("/privacy")} className="font-medium text-accent hover:underline">
-              {h.privacyLink}
-            </Link>
-          </p>
-        </section>
-
-        {(["image", "pdf"] as const).map((category) => (
-          <section key={category} aria-labelledby={`${category}-tools`} className="space-y-4">
-            <h2 id={`${category}-tools`} className="text-xl font-semibold text-fg">
-              {t.categories[category]}
-            </h2>
-            <ul className="grid gap-3 md:grid-cols-2">
-              {toolsByCategory(category).map((tool) => (
-                <li key={tool.slug} className="scroll-rise">
-                  <ToolCard tool={localizeTool(tool, t, locale)} />
-                </li>
-              ))}
-            </ul>
-          </section>
-        ))}
       </div>
     </div>
   );

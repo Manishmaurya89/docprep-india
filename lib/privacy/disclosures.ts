@@ -28,6 +28,7 @@ export interface NetworkUse {
 export const NETWORK_USE: readonly NetworkUse[] = [
   { id: "pages", ...enPages.privacy.networkUse.pages!, includesFileData: false },
   { id: "pdfjs", ...enPages.privacy.networkUse.pdfjs!, includesFileData: false },
+  { id: "mediapipe", ...enPages.privacy.networkUse.mediapipe!, includesFileData: false },
 ];
 
 export function toolsByProcessing(location: ProcessingLocation): ToolDefinition[] {

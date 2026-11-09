@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card, CardBody, CardHeader } from "@/components/ui/Card";
 import { Checkbox, SegmentedControl, SelectField, TextField } from "@/components/ui/Field";
 import { DOCUMENT_TYPES } from "@/data/exam-requirements/constants";
+import { peekHandOff } from "@/lib/handoff";
 import { useI18n } from "@/lib/i18n/client";
 import type { DocumentRequirement } from "@/data/exam-requirements/schema";
 import { type DraftDocument, buildCustomSpec, newDraft } from "../custom-preset";
@@ -45,10 +46,13 @@ export function CustomPresetBuilder({
   initial,
   presets = [],
   allowMultiple = true,
+  handoffKey,
 }: {
   initial?: Partial<DraftDocument>[];
   presets?: PresetOption[];
   allowMultiple?: boolean;
+  /** Accept a photo handed over by another tool (see lib/handoff.ts) into the first photo slot. */
+  handoffKey?: string;
 }) {
   const { t } = useI18n();
   const c = t.custom;
@@ -58,12 +62,19 @@ export function CustomPresetBuilder({
   // Applied requirements only change when the user confirms, so typing does not discard prepared files.
   const [applied, setApplied] = useState(() => (initial?.length ? buildCustomSpec(drafts, t).spec : null));
   const [version, setVersion] = useState(0);
+  // Only ever set after in-app navigation from another tool, never on a full page load, so server and client agree.
+  const [photoWaiting] = useState(() => Boolean(handoffKey && typeof window !== "undefined" && peekHandOff(handoffKey)));
 
   const update = (key: string, patch: Partial<DraftDocument>) => setDrafts((current) => current.map((d) => (d.key === key ? { ...d, ...patch } : d)));
   const dirty = JSON.stringify(applied?.documents ?? null) !== JSON.stringify(built.spec?.documents ?? null);
 
   return (
     <div className="space-y-6">
+      {photoWaiting && !applied ? (
+        <div data-testid="handoff-waiting">
+          <Alert tone="success">{t.photoBackground.handoffReady}</Alert>
+        </div>
+      ) : null}
       <Card>
         <CardHeader title={c.title} description={c.description} />
         <CardBody className="space-y-6">
@@ -180,7 +191,7 @@ export function CustomPresetBuilder({
       {applied ? (
         <section aria-label={c.prepareSection} className="space-y-4">
           <SpecWarnings warnings={getSpecWarnings(applied, undefined, t)} />
-          <ApplicationWorkspace key={version} spec={applied} zipName="prepared-documents.zip" />
+          <ApplicationWorkspace key={version} spec={applied} zipName="prepared-documents.zip" handoffKey={handoffKey} />
         </section>
       ) : null}
     </div>

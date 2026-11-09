@@ -170,6 +170,29 @@ function Scene({ icon, target }: { icon: ToolIcon; target?: string }) {
           </text>
         </>
       );
+    case "photo-bg":
+      return (
+        <>
+          {/* A portrait on a busy background becomes the same portrait on white and on red. */}
+          <rect x="6" y="10" width="30" height="40" rx="3" fill={C.white} stroke={C.slate} strokeWidth="1.5" />
+          <rect x="9" y="13" width="24" height="34" fill={C.blueSoft} />
+          <path d="M9 30l7-9 6 6 4-4 7 7v17H9z" fill={C.green} opacity="0.55" />
+          <circle cx="28" cy="18" r="2.5" fill={C.amber} />
+          <path d="M12 47c1-8 4.5-11 9-11s8 3 9 11z" fill={C.shirt} />
+          <circle cx="21" cy="29" r="5.5" fill={C.skin} />
+          <path d="M15.5 28c0-4 2.5-6.5 5.5-6.5s5.5 2.5 5.5 6.5c-1.5-2-3.3-3-5.5-3s-4 1-5.5 3z" fill={C.hair} />
+          {arrow(40)}
+          <rect x="55" y="8" width="26" height="34" rx="3" fill={C.white} stroke={C.slate} strokeWidth="1.5" />
+          <path d="M58.5 39c1-7 3.8-9.5 7.5-9.5s6.5 2.5 7.5 9.5z" fill={C.shirt} />
+          <circle cx="66" cy="23.5" r="4.8" fill={C.skin} />
+          <path d="M61.2 22.6c0-3.4 2.2-5.6 4.8-5.6s4.8 2.2 4.8 5.6c-1.3-1.7-2.9-2.6-4.8-2.6s-3.5.9-4.8 2.6z" fill={C.hair} />
+          <rect x="68" y="34" width="20" height="24" rx="2.5" fill={C.white} stroke={C.slate} strokeWidth="1.2" />
+          <rect x="70" y="36" width="16" height="20" fill="#d62828" />
+          <path d="M71.5 56c.6-4.5 2.4-6 5-6s4.4 1.5 5 6z" fill={C.shirt} />
+          <circle cx="76.5" cy="46.5" r="3.2" fill={C.skin} />
+          <path d="M73.3 45.9c0-2.3 1.4-3.7 3.2-3.7s3.2 1.4 3.2 3.7c-.9-1.1-1.9-1.7-3.2-1.7s-2.3.6-3.2 1.7z" fill={C.hair} />
+        </>
+      );
     case "pdf-image":
       return (
         <>

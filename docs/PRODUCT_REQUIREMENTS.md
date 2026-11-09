@@ -85,11 +85,15 @@ final brand.
 
 ### 5.4 Cross-cutting
 
-- Home page: search, quick tasks, government preparation section, categories,
-  privacy explanation. The headline speaks to *any* online form (not only
-  exams), with picture cards for exam and job forms, bank accounts and KYC,
-  passport and visa, admissions, insurance claims and office work. Those cards
-  link to general tools and make no claims about any organisation's limits.
+- Home page: editing comes first. The headline, search and a picture tile for
+  every editing tool (with an All / Image / PDF filter) fill the first screen,
+  on phones too; new tools under `/tools/` appear there automatically
+  (`homeTiles()` in the registry). Below them: the privacy promises, how it
+  works, the privacy explanation, then picture cards for *any* online form
+  (exam and job forms, bank accounts and KYC, passport and visa, admissions,
+  insurance claims, office work) and, last, the government preparation
+  section. The form cards link to general tools and make no claims about any
+  organisation's limits.
 - Privacy page that is generated from the same tool registry that declares
   where each tool processes files, so disclosures cannot drift from behaviour.
 - Light theme only. Dark mode was removed at the product owner's request
