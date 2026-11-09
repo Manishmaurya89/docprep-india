@@ -3,6 +3,12 @@ import { defineConfig, devices } from "@playwright/test";
 const PORT = Number(process.env.E2E_PORT ?? 3100);
 const baseURL = `http://127.0.0.1:${PORT}`;
 
+/**
+ * Matches only the named spec files. Playwright tests `testMatch` against the absolute path, so a bare
+ * word like /home/ would also match a folder such as /home/runner/ on CI and pull in every file.
+ */
+const specs = (...names: string[]) => new RegExp(`[\\\\/](${names.join("|")})\\.spec\\.ts$`);
+
 export default defineConfig({
   testDir: "tests/e2e",
   fullyParallel: true,
@@ -20,18 +26,29 @@ export default defineConfig({
     {
       name: "mobile-chromium",
       use: { ...devices["Pixel 7"] },
-      testMatch: /responsive|accessibility|hindi|home/,
+      testMatch: specs("responsive", "accessibility", "hindi", "home"),
     },
     // Opt-in: Playwright's Firefox could not launch in the environment where this suite was written
     // ("Could not find profile folder"), so it is not part of the default run. Enable with E2E_FIREFOX=1.
     ...(process.env.E2E_FIREFOX
-      ? [{ name: "desktop-firefox", use: { ...devices["Desktop Firefox"] }, testMatch: /image-tools|pdf-tools|application-prep|errors|resilience/ }]
+      ? [{ name: "desktop-firefox", use: { ...devices["Desktop Firefox"] }, testMatch: specs("image-tools", "pdf-tools", "application-prep", "errors", "resilience") }]
       : []),
     {
       // Safari engine (iPhone emulation): core journeys only. Run with --project=mobile-webkit.
       name: "mobile-webkit",
       use: { ...devices["iPhone 14"] },
-      testMatch: /image-tools|pdf-tools|pdf-to-image|photo-background\.spec|application-prep|errors|real-content|arrange-pages|hindi|home/,
+      testMatch: specs(
+        "image-tools",
+        "pdf-tools",
+        "pdf-to-image",
+        "photo-background",
+        "application-prep",
+        "errors",
+        "real-content",
+        "arrange-pages",
+        "hindi",
+        "home",
+      ),
     },
   ],
   webServer: {
