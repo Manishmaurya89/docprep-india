@@ -126,7 +126,7 @@ other origins, and the microphone stays off), `Cross-Origin-Opener-Policy: same-
 | next, react, react-dom | MIT | Framework |
 | pdf-lib | MIT | PDF editing (pure JS) |
 | pdfjs-dist | Apache-2.0 | PDF rendering |
-| @mediapipe/tasks-vision | Apache-2.0 | Person cut-out and face detection (photo background). Version 1.1.1 chosen over the then-newest 1.2.2 because that was under a week old. |
+| @mediapipe/tasks-vision | Apache-2.0 | Person cut-out and face detection (photo background). Version 1.1.1 chosen over the then-newest 1.2.2 because that was under a week old. Updated by hand (Dependabot skips it): the version constant, copy script and models move together. |
 | MediaPipe selfie segmenter and BlazeFace models | Apache-2.0 (model cards) | Committed in `assets/mediapipe/` with source URLs and SHA-256 |
 | fflate | MIT | ZIP creation |
 | zod | MIT | Schema validation |

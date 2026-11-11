@@ -8,6 +8,18 @@ updates:
     groups:
       minor-and-patch:
         update-types: [minor, patch]
+    ignore:
+      # Updated by hand: its version is also in lib/file-processing/background/assets.ts,
+      # its file layout is copied by scripts/copy-mediapipe.mjs, and the models in
+      # assets/mediapipe/ must be re-tested with it (1.2.2 dropped a file the copy script expects).
+      - dependency-name: "@mediapipe/tasks-vision"
+      # typescript-eslint supports TypeScript below 6.1 only (checked 2026-11-11).
+      - dependency-name: typescript
+        update-types: ["version-update:semver-major"]
+      # Keep Node's types at the oldest Node the app supports (package.json engines: >=22.13),
+      # so code cannot use newer Node features without a type error.
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
   - package-ecosystem: github-actions
     directory: /
     schedule:
