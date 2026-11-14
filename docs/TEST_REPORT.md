@@ -47,7 +47,7 @@ scanned certificate brought under IBPS's 500 KB limit on A4; a phone photo
 stored sideways with EXIF orientation shown and saved upright; transparency
 warning and flattened JPEG output; 90° rotation swapping output dimensions; a
 genuinely encrypted PDF (Ghostscript, encrypted object streams) reported as
-password-protected; the verification sheet listing all 7 official records.
+password-protected; the verification sheet listing every official record (10 as of 2026-11-14).
 
 PDF to JPG/PNG (`pdf-to-image.spec.ts`, Chromium and WebKit): every page of
 a 3-page PDF to JPG at 150 DPI (pixel size and recorded DPI read from the

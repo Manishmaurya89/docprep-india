@@ -85,7 +85,7 @@ Units: sizes in KB as printed; pixels as integers; physical sizes in mm.
 - Physical sizes, colours, backgrounds and handwriting rules are always
   manual checks.
 
-## Records and their sources (as of 2026-10-29)
+## Records and their sources (as of 2026-11-14)
 
 | Record | Source |
 | --- | --- |
@@ -96,12 +96,19 @@ Units: sizes in KB as printed; pixels as integers; physical sizes in mm.
 | `ssc-chsl-2026` | ssc.gov.in — Notice, CHSL 2026 (07.09.2026), para 9.6 and annexure |
 | `upsc-cse-2026` | upsc.gov.in — Examination Notice 05/2026-CSE (04.02.2026), Notes 2–3. Technical limits are not in the notice; UPSC's separate instruction document could not be retrieved, so none are recorded. |
 | `rrb-ntpc-graduate-cen-06-2025` | rrbsecunderabad.gov.in — CEN No. 06/2025 (21.10.2025), paras 14.4–14.5.2; Corrigendum-1 (19.11.2025) |
+| `rrb-ntpc-undergraduate-cen-07-2026` | rrbapply.gov.in — CEN No. 07/2026 (14.10.2026), paras 14.4–14.5.2; Corrigendum-1 (13.11.2026, closing date 15.11.2026) |
+| `rrb-station-master-cen-08-2026` | rrbapply.gov.in — CEN No. 08/2026 (27.10.2026), paras 16.5–16.6. Its signature box is 50 mm × 20 mm, not 35 mm × 20 mm. |
+| `rrb-isolated-categories-cen-09-2026` | rrbapply.gov.in — CEN No. 09/2026 (05.11.2026), paras 14.4–14.5.2 |
 | `example-photo-signature` | none (example) |
 
 ### Known follow-ups
 
 - UPSC: add the photo and signature limits from UPSC's official "Photos and
   Signature" instructions on upsconline.nic.in once retrievable.
-- SBI PO 2026-27 (CRPD/PO/2026-27/09) and newer IBPS / RRB cycles: add
-  records when their notifications are read.
+- SBI PO 2026-27 (CRPD/PO/2026-27/09), newer IBPS cycles and RRB CEN
+  06/2026 (NTPC Graduate, closed 08.11.2026): add records when their
+  notifications are read.
+- RRB notices: the application portal https://www.rrbapply.gov.in links each
+  CEN PDF from its home page and serves plain text PDFs; the regional RRB
+  sites were unreachable from the build machine in Nov 2026.
 - Have a second maintainer verify the `source-cited` records.

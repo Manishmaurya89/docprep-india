@@ -92,9 +92,11 @@ test.describe("real-content paths", () => {
   });
 
   test("verification sheet lists every official record with its source", async ({ page }) => {
+    const { SPECS } = await import("@/data/exam-requirements");
     await page.goto("/exam/verify");
     const records = page.getByTestId("verify-record");
-    await expect(records).toHaveCount(7);
+    await expect(records).toHaveCount(SPECS.filter((spec) => spec.verificationStatus !== "example").length);
+    await expect(page.getByText("rrb-station-master-cen-08-2026").first()).toBeVisible();
     await expect(records.first().getByRole("link")).toHaveAttribute("href", /^https:\/\//);
     await expect(page.getByRole("checkbox", { name: "ibps-crp-po-mt-xvi Photograph File size matches the source" })).toBeVisible();
     await expect(page.getByText("20–50 KB").first()).toBeVisible();

@@ -15,7 +15,8 @@ describe("requirements registry", () => {
   });
 
   it("cites an official https source for every non-example record, with dates", () => {
-    const official = ["ssc.gov.in", "upsc.gov.in", "ibps.in", "sbi.bank.in", "rrbsecunderabad.gov.in"];
+    // rrbapply.gov.in is the application portal the RRB notices themselves name (e.g. CEN 08/2026, page 4).
+    const official = ["ssc.gov.in", "upsc.gov.in", "ibps.in", "sbi.bank.in", "rrbsecunderabad.gov.in", "rrbapply.gov.in"];
     for (const spec of SPECS.filter((s) => s.verificationStatus !== "example")) {
       expect(spec.source, spec.id).not.toBeNull();
       const host = new URL(spec.source!.url).hostname;
