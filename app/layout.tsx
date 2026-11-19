@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { headers } from "next/headers";
 import { connection } from "next/server";
 import type { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { SkipLink } from "@/components/layout/SkipLink";
@@ -50,6 +51,7 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
             <SiteFooter />
           </ToastProvider>
         </I18nProvider>
+        <Analytics />
       </body>
     </html>
   );
