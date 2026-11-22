@@ -8,6 +8,9 @@ import { makePdf, pageWidthFor } from "../helpers/pdf";
 import { noisePng } from "../helpers/png";
 import { downloadFrom, pdfFile, recordRequests } from "./helpers";
 
+/** Rendering pages takes several seconds on CI's slower WebKit, longer than the 5 s default wait. */
+const CONVERT_TIMEOUT = 30_000;
+
 /** Share of clearly dark pixels, measured by decoding the image in the browser. */
 async function darkShare(page: Page, bytes: Uint8Array, mime: string): Promise<number> {
   return page.evaluate(
@@ -45,7 +48,7 @@ test.describe("PDF to JPG/PNG", () => {
 
     await page.getByRole("button", { name: "Convert 3 pages to JPG" }).click();
     const result = page.getByTestId("pdf-image-result");
-    await expect(result.getByTestId("pdf-image")).toHaveCount(3);
+    await expect(result.getByTestId("pdf-image")).toHaveCount(3, { timeout: CONVERT_TIMEOUT });
     await expect(result.getByText("3 images ready")).toBeVisible();
 
     const { download, bytes } = await downloadFrom(page, () => result.getByTestId("pdf-image").nth(1).getByRole("button", { name: "Download" }).click());
@@ -78,7 +81,7 @@ test.describe("PDF to JPG/PNG", () => {
 
     await page.getByRole("button", { name: "Convert 1 page to PNG" }).click();
     const result = page.getByTestId("pdf-image-result");
-    await expect(result.getByTestId("pdf-image")).toHaveCount(1);
+    await expect(result.getByTestId("pdf-image")).toHaveCount(1, { timeout: CONVERT_TIMEOUT });
     await expect(result.getByRole("button", { name: "Download all (ZIP)" })).toHaveCount(0);
     const { download, bytes } = await downloadFrom(page, () => result.getByRole("button", { name: "Download" }).click());
     expect(download.suggestedFilename()).toBe("scan-page-2.png");
@@ -130,11 +133,11 @@ test.describe("PDF to JPG/PNG", () => {
     await limit.fill("1");
     await page.getByRole("button", { name: "Convert 1 page to JPG" }).click();
     const result = page.getByTestId("pdf-image-result");
-    await expect(result.getByText(/Page 1 could not get under 1 KB/)).toBeVisible({ timeout: 30_000 });
+    await expect(result.getByText(/Page 1 could not get under 1 KB/)).toBeVisible({ timeout: CONVERT_TIMEOUT });
 
     await limit.fill("150");
     await page.getByRole("button", { name: "Convert 1 page to JPG" }).click();
-    await expect(result.getByTestId("pdf-image")).toHaveCount(1, { timeout: 30_000 });
+    await expect(result.getByTestId("pdf-image")).toHaveCount(1, { timeout: CONVERT_TIMEOUT });
     await expect(result.getByText(/could not get under/)).toHaveCount(0);
     const { bytes } = await downloadFrom(page, () => result.getByRole("button", { name: "Download" }).click());
     expect(bytes.length).toBeLessThanOrEqual(150_000);
@@ -162,7 +165,7 @@ test.describe("PDF to JPG/PNG", () => {
     await page.getByTestId("pdf-input").setInputFiles(pdfFile("doc.pdf", await makePdf([1, 2])));
     await expect(page.getByRole("img", { name: "Preview of page 2" })).toBeVisible();
     await page.getByRole("button", { name: "Convert 2 pages to JPG" }).click();
-    await expect(page.getByTestId("pdf-image")).toHaveCount(2);
+    await expect(page.getByTestId("pdf-image")).toHaveCount(2, { timeout: CONVERT_TIMEOUT });
     await axe();
   });
 
@@ -174,7 +177,7 @@ test.describe("PDF to JPG/PNG", () => {
     await page.getByLabel("PDF का पासवर्ड").fill("test1234");
     await page.getByRole("button", { name: "PDF खोलें" }).click();
     await page.getByRole("button", { name: "1 पेज JPG में बदलें" }).click();
-    await expect(page.getByText("1 इमेज तैयार")).toBeVisible();
+    await expect(page.getByText("1 इमेज तैयार")).toBeVisible({ timeout: CONVERT_TIMEOUT });
   });
 
   test("rejects a file that is not a PDF", async ({ page }) => {
